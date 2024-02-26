@@ -23,6 +23,9 @@ jobs:
 
     - name: Check java version
       run: java --version
+    
+    - name: Set execute permission for gradlew
+      run: chmod +x gradlew
 
     - name: Build the project with Gradle
       run: ./gradlew build
