@@ -63,10 +63,7 @@ jobs:
         docker ps -qa -f name=code-with-quarkus-jvm
 
     - name: Test endpoint
-      env: 
-        SERVER_HOST: localhost
-        SERVER_PORT: 8080
-      run: curl http://${{SERVER_HOST}}:${{SERVER_PORT}}/hello
+      run: curl http://localhost:8080/hello
 
     - name: Stop docker container
       run: docker stop code-with-quarkus-jvm
