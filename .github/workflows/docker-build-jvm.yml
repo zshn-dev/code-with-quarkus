@@ -56,3 +56,19 @@ jobs:
         SERVER_PORT: 8080        
       run: ./deploy.cmd
       if: runner.os == 'Windows'
+
+    - name: Check docker containers
+      run: |
+        docker ps
+        docker ps -qa -f name=code-with-quarkus-jvm
+
+    - name: Test endpoint
+      env: 
+        SERVER_HOST: localhost
+        SERVER_PORT: 8080
+      run: curl http://$SERVER_HOST:$SERVER_PORT/hello
+
+    - name: Stop docker container
+      run: docker stop code-with-quarkus-jvm
+
+    
