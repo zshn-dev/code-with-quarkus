@@ -50,16 +50,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
-    - name: Run the container
-      run: docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
-
-    - name: Check docker containers
-      run: docker ps
-
-    - name: Test endpoint
-      run: curl http://localhost:8080/hello
-
-    - name: Stop docker container
-      run: docker stop code-with-quarkus-jvm
-
-    
+    - name: Test Container
+      run: |
+        docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
+        docker ps
+        curl http://localhost:8080/hello
+        docker stop code-with-quarkus-jvm  
