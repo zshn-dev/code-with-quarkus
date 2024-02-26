@@ -51,4 +51,8 @@ jobs:
 
     steps:
     - name: Run the container
-      run: docker run -i --rm -p 8080:8080 quarkus/code-with-quarkus-jvm
+      env: 
+        SERVER_HOST: localhost
+        SERVER_PORT: 8080        
+      run: ./deploy.cmd
+      if: runner.os == 'Windows'
