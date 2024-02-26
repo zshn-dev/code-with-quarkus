@@ -14,12 +14,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    
-    - name: Set execute permission for gradlew
-      run: chmod +x gradlew
-    
-    - name: Build the project with Gradle
-      run: ./gradlew build
       
     - name: Build the Docker image (JVM)
       run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/quarkus-build-poc-jvm .
