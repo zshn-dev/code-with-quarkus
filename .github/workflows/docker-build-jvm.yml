@@ -34,7 +34,7 @@ jobs:
       run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/code-with-quarkus-jvm .
 
   deploy:
-
+    needs: build
     runs-on: self-hosted
 
     steps:
