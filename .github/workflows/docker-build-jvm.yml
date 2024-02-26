@@ -51,16 +51,10 @@ jobs:
 
     steps:
     - name: Run the container
-      env: 
-        SERVER_HOST: localhost
-        SERVER_PORT: 8080        
-      run: ./deploy.cmd
-      if: runner.os == 'Windows'
+      run: docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
 
     - name: Check docker containers
-      run: |
-        docker ps
-        docker ps -qa -f name=code-with-quarkus-jvm
+      run: docker ps
 
     - name: Test endpoint
       run: curl http://localhost:8080/hello
