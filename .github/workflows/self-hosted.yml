@@ -61,7 +61,7 @@ jobs:
     - name: Deploy Container
       run: |
         docker pull ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
-        docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
+        docker run -i -d --rm -p 8080:8080 --name code-with-quarkus ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
         docker ps
 
   test:
@@ -79,4 +79,4 @@ jobs:
       if: runner.os == 'Linux'
         
     - name: Stop Container
-      run: docker stop code-with-quarkus-jvm
+      run: docker stop code-with-quarkus
