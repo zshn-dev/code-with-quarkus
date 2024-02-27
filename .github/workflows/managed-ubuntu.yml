@@ -1,4 +1,4 @@
-name: Self-Hosted Build Publish Deploy Test (JVM)
+name: Managed Ubuntu Build Publish Deploy Test (JVM)
 
 on:
   push:
