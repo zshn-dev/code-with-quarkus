@@ -45,8 +45,12 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Push Docker image
+      run: docker push code-with-quarkus-jvm
+
     - name: Test Container
       run: |
+        docker pull quarkus/code-with-quarkus-jvm:latest
         docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
         docker ps
         curl http://localhost:8080/hello
