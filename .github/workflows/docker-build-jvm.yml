@@ -19,14 +19,14 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '21'
-      if: runner.os == 'Ubuntu'
+      if: runner.os == 'ubuntu'
 
     - name: Check java version
       run: java --version
     
     - name: Set execute permission for gradlew
       run: chmod +x gradlew
-      if: runner.os == 'Ubuntu'
+      if: runner.os == 'ubuntu'
 
     - name: Build the project with Gradle
       run: ./gradlew build
