@@ -34,7 +34,7 @@ jobs:
     - name: Build the Docker image (JVM)
       run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/code-with-quarkus-jvm .
 
-  publish:
+  deploy:
     needs: build
     runs-on: ubuntu-latest
 
@@ -45,11 +45,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-  deploy:
-    needs: publish
-    runs-on: ubuntu-latest
-
-    steps:
     - name: Test Container
       run: |
         docker run -i -d --rm -p 8080:8080 --name code-with-quarkus-jvm quarkus/code-with-quarkus-jvm
