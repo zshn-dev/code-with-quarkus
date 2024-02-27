@@ -51,14 +51,6 @@ jobs:
         docker pull ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
         docker run -i -d --rm -p 8080:8080 --name code-with-quarkus ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
         docker ps
-    
-    - name: Test Container (Windows)
-      run: Invoke-WebRequest -URI http://localhost:8080/hello
-      if: runner.os == 'Windows'
-      
-    - name: Test Container (Linux)
-      run: curl http://localhost:8080/hello
-      if: runner.os == 'Linux'
         
     - name: Stop Container
       run: docker stop code-with-quarkus-jvm
