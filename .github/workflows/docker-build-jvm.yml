@@ -9,7 +9,7 @@ on:
 jobs:
 
   build:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -36,7 +36,7 @@ jobs:
 
   publish:
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Login to Docker Hub
@@ -47,7 +47,7 @@ jobs:
 
   deploy:
     needs: publish
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
     - name: Test Container
