@@ -33,12 +33,6 @@ jobs:
       
     - name: Build the Docker image (JVM)
       run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/code-with-quarkus-jvm .
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
     
     - name: Tag the image
       run: docker tag quarkus/code-with-quarkus-jvm:latest ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
@@ -54,7 +48,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: publish
+    needs: build
 
     steps:        
     
