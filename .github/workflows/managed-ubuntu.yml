@@ -1,0 +1,102 @@
+name: Managed Ubuntu Build Publish Deploy Test (JVM)
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Echo Default Environment Variables
+      run: |
+        echo "CI: $CI"
+        echo "GITHUB_ACTION: $GITHUB_ACTION"
+        echo "GITHUB_ACTION_PATH: $GITHUB_ACTION_PATH"
+        echo "GITHUB_ACTION_REPOSITORY: $GITHUB_ACTION_REPOSITORY"
+        echo "GITHUB_ACTIONS: $GITHUB_ACTIONS"
+        echo "GITHUB_ACTOR: $GITHUB_ACTOR"
+        echo "GITHUB_ACTOR_ID: $GITHUB_ACTOR_ID"
+        echo "GITHUB_API_URL: $GITHUB_API_URL"
+        echo "GITHUB_BASE_REF: $GITHUB_BASE_REF"
+        echo "GITHUB_ENV: $GITHUB_ENV"
+        echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+        echo "GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH"
+        echo "GITHUB_GRAPHQL_URL: $GITHUB_GRAPHQL_URL"
+        echo "GITHUB_HEAD_REF: $GITHUB_HEAD_REF"
+        echo "GITHUB_JOB: $GITHUB_JOB"
+        echo "GITHUB_OUTPUT: $GITHUB_OUTPUT"
+        echo "GITHUB_PATH: $GITHUB_PATH"
+        echo "GITHUB_REF: $GITHUB_REF"
+        echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
+        echo "GITHUB_REF_PROTECTED: $GITHUB_REF_PROTECTED"
+        echo "GITHUB_REF_TYPE: $GITHUB_REF_TYPE"
+        echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+        echo "GITHUB_REPOSITORY_ID: $GITHUB_REPOSITORY_ID"
+        echo "GITHUB_REPOSITORY_OWNER: $GITHUB_REPOSITORY_OWNER"
+        echo "GITHUB_REPOSITORY_OWNER_ID: $GITHUB_REPOSITORY_OWNER_ID"
+        echo "GITHUB_RETENTION_DAYS: $GITHUB_RETENTION_DAYS"
+        echo "GITHUB_RUN_ATTEMPT: $GITHUB_RUN_ATTEMPT"
+        echo "GITHUB_RUN_ID: $GITHUB_RUN_ID"
+        echo "GITHUB_RUN_NUMBER: $GITHUB_RUN_NUMBER"
+        echo "GITHUB_SERVER_URL: $GITHUB_SERVER_URL"
+        echo "GITHUB_SHA: $GITHUB_SHA"
+        echo "GITHUB_STEP_SUMMARY: $GITHUB_STEP_SUMMARY"
+        echo "GITHUB_TRIGGERING_ACTOR: $GITHUB_TRIGGERING_ACTOR"
+        echo "GITHUB_WORKFLOW: $GITHUB_WORKFLOW"
+        echo "GITHUB_WORKFLOW_REF: $GITHUB_WORKFLOW_REF"
+        echo "GITHUB_WORKFLOW_SHA: $GITHUB_WORKFLOW_SHA"
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
+        echo "RUNNER_ARCH: $RUNNER_ARCH"
+        echo "RUNNER_DEBUG: $RUNNER_DEBUG"
+        echo "RUNNER_NAME: $RUNNER_NAME"
+        echo "RUNNER_OS: $RUNNER_OS"
+        echo "RUNNER_TEMP: $RUNNER_TEMP"
+        echo "RUNNER_TOOL_CACHE: $RUNNER_TOOL_CACHE"
+    
+    - name: Set up JDK 21    
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'adopt'
+        java-version: '21'
+      if: runner.os == 'Linux'
+
+    - name: Check java version
+      run: java --version
+    
+    - name: Set execute permission for gradlew
+      run: chmod +x gradlew
+      if: runner.os == 'Linux'
+
+    - name: Build the project with Gradle
+      run: ./gradlew build
+      
+    - name: Build the Docker image (JVM)
+      run: docker build -f src/main/docker/Dockerfile.jvm -t quarkus/code-with-quarkus-jvm .
+    
+    - name: Tag the image
+      run: docker tag quarkus/code-with-quarkus-jvm:latest ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
+      
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push to Docker Hub
+      run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
+    
+    - name: Deploy Container
+      run: |
+        docker pull ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
+        docker run -i -d --rm -p 8080:8080 --name code-with-quarkus ${{ secrets.DOCKERHUB_USERNAME }}/code-with-quarkus:latest
+        docker ps
+        
+    - name: Stop Container
+      run: docker stop code-with-quarkus
